@@ -7,12 +7,27 @@ var Contact = {
 var Address = {
   fullAddress: function() {
     return this.street + ", " + this.city + ", " + this.state;
+  },
+  valid: function() {
+    var firstThree = this.street.charAt(0) + this.street.charAt(1) + this.street.charAt(2);
+    if (isNaN(firstThree)) {
+      alert("Please enter a valid street address.");
+    } else {
+      return true;
+    };
   }
 };
 
-var Numbers = {
-  phoneNumbers: function() {
-    return this.kind + ": " + this.phoneNumber;
+var PhoneNumber = {
+  fullPhoneNumber: function() {
+    return this.kind + ": " + this.digits;
+  },
+  valid: function() {
+    if (isNaN(this.digits)) {
+      alert("Please enter a valid phone number.");
+    } else {
+      return true;
+    };
   }
 };
 
@@ -21,15 +36,15 @@ $(document).ready(function() {
     $("#new-addresses").append('<div class="new-address">' +
                                 '<div class="form-group">' +
                                   '<label for="new-street">Street</label>' +
-                                  '<input type="text" class="form-control new-street">' +
+                                  '<input type="text" class="form-control new-street" required>' +
                                 '</div>' +
                                 '<div class="form-group">' +
                                   '<label for="new-city">City</label>' +
-                                  '<input type="text" class="form-control new-city">' +
+                                  '<input type="text" class="form-control new-city" required>' +
                                 '</div>' +
                                 '<div class="form-group">' +
                                   '<label for="new-state">State</label>' +
-                                  '<input type="text" class="form-control new-state">' +
+                                  '<input type="text" class="form-control new-state" required>' +
                                 '</div>' +
                               '</div>');
   });
@@ -38,7 +53,7 @@ $(document).ready(function() {
     $("#new-numbers").append('<div class="new-number">' +
                               '<div class="form-group">' +
                                 '<label for="new-phone-number">Phone Number</label>' +
-                                '<input type="text" class="form-control new-phone-number">' +
+                                '<input type="tel" maxlength="10" class="form-control new-phone-number" required>' +
                                 '<select id="number-kind">' +
                                   '<option value="Home">Home</option>' +
                                   '<option value="Work">Work</option>' +
@@ -52,11 +67,10 @@ $(document).ready(function() {
   $("form#new-contact").submit(function(event) {
     event.preventDefault();
 
+
+
     var inputtedFirstName = $("input#new-first-name").val();
     var inputtedLastName = $("input#new-last-name").val();
-    var inputtedAddress = $("input#new-address").val();
-    var inputtedPhoneNumber = $("input#new-phone-number").val();
-    var inputtedNumberKind = $("select#number-kind").val();
     var newContact = Object.create(Contact);
     newContact.firstName = inputtedFirstName;
     newContact.lastName = inputtedLastName;
@@ -76,14 +90,14 @@ $(document).ready(function() {
       newContact.addresses.push(newAddress);
     });
 
+    
     $(".new-number").each(function() {
-      var inputtedPhoneNumber = $(this).find("input.new-phone-number").val();
+      var inputtedDigits = $(this).find("input.new-phone-number").val();
+      inputtedDigits = inputtedDigits.slice(0,3) + "-" + inputtedDigits.slice(3,6) + "-" + inputtedDigits.slice(6);
       var inputtedNumberKind = $(this).find("select#number-kind").val();
-
-      var newNumber = Object.create(Numbers);
-      newNumber.phoneNumber = inputtedPhoneNumber;
+      var newNumber = Object.create(PhoneNumber);
+      newNumber.digits = inputtedDigits;
       newNumber.kind = inputtedNumberKind;
-      console.log(newContact.numbersArray);
       newContact.numbersArray.push(newNumber);
     });
     
@@ -103,7 +117,7 @@ $(document).ready(function() {
 
       $("ul#numbers").text("");
       newContact.numbersArray.forEach(function(number) {
-        $("ul#numbers").append("<li>" + number.phoneNumbers() + "</li>");
+        $("ul#numbers").append("<li>" + number.fullPhoneNumber() + "</li>");
       });
     });
 

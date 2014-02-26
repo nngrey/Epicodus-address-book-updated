@@ -10,3 +10,6 @@
 .contact:hover {
   text-decoration: underline;
 }
+#number-kind {
+  margin-top: 10px;
+}
